@@ -1,0 +1,67 @@
+# 135 characters ######################################################################################################################
+#' @title MRBMA dataset: Association of genetically predicted NMR metabolites with age-related macular degeneration
+#' @description The dataset contains summary-level genetic association data for 30 circulating NMR metabolites considered as
+#' exposures and age-related macular degeneration (AMD) as the outcome. The 148 independent genetic variants (SNPs) used as
+#' instrumental variables (IVs) were selected to be associated at genome-wide significance with at least one of the NMR metabolites
+#' after pruning or clumping. This dataset is the basis of the application example in \insertCite{Zuber2020;textual}{MRBMA}, where
+#' MR-BMA is used to prioritise likely causal NMR metabolites for AMD risk
+#'
+#' @docType data
+#'
+#' @format A named list with four elements:
+#' \describe{
+#'   \item{\code{betaX}}{Numeric matrix of dimension \eqn{148 \times 30}. Each row corresponds to one SNP and each column to
+#'         one NMR metabolite. Entries are the estimated SNP-metabolite associations obtained from the genome-wide association
+#'         study (GWAS) of \insertCite{Kettunen2016;textual}{MRBMA}}
+#'   \item{\code{betaAMD}}{Numeric vector of length 148. Estimated SNP-AMD associations obtained from the AMD GWAS of
+#'         \insertCite{Fritsche2015;textual}{MRBMA}. Renamed from \code{amd_beta} in the original \code{demo_AMD} repository
+#'         of \insertCite{Zuber2020;textual}{MRBMA}}
+#'   \item{\code{seAMD}}{Numeric vector of length 148. Standard errors of the SNP-AMD association estimates in
+#'         \code{betaAMD}, from \insertCite{Fritsche2015;textual}{MRBMA}. Used for inverse-variance weighting (IVW) prior to
+#'         analysis. Renamed from \code{amd_se} in the original \code{demo_AMD} repository}
+#'   \item{\code{annotate}}{Character matrix of dimension \eqn{148 \times 7}. Annotation table for the 148 SNPs. Column 1
+#'         contains the rs-number identifiers and column 7 contains the nearest gene name. Remaining columns contain
+#'         additional annotation fields as provided in the original \code{demo_AMD} repository}
+#' }
+#'
+#' @details
+#' Before running MRBMA, inverse-variance weighting (IVW) should be applied as follows:
+#'
+#' \preformatted{
+#' betaX_ivw   <- AMD_data$betaX   / AMD_data$seAMD
+#' betaAMD_ivw <- AMD_data$betaAMD / AMD_data$seAMD
+#' }
+#'
+#' The IVW-scaled matrices \code{betaX_ivw} and \code{betaAMD_ivw} are the inputs to \code{MRBMA_exhaustive} and
+#' \code{MRBMA_SSS} via an \code{mvMRInput} object. See the example below and \insertCite{Zuber2020;textual}{MRBMA} for
+#' details on the analysis pipeline
+#'
+#' @references
+#' \insertAllCited{}
+#'
+#' @examples
+#' \dontrun{
+#'
+#' # Example
+#' data(AMD_data)
+#'
+#' # IVW pre-processing
+#' betaX_ivw   <- AMD_data$betaX   / AMD_data$seAMD
+#' betaAMD_ivw <- AMD_data$betaAMD / AMD_data$seAMD
+#' rs          <- AMD_data$annotate[, 1]
+#' rf          <- colnames(AMD_data$betaX)
+#'
+#' # Build mvMRInput object and run SSS
+#' amd_input <- new("mvMRInput",
+#'                  betaX    = as.matrix(betaX_ivw),
+#'                  betaY    = as.matrix(betaAMD_ivw),
+#'                  snps     = rs,
+#'                  exposure = rf,
+#'                  outcome  = "AMD")
+#'
+#' bma_out <- MRBMA_SSS(amd_input, kmin = 1, kmax = 12,
+#'                       max_iter = 100, prior_prob = 0.1)
+#' report_best_models(bma_out, top = 10)
+#' report_MRBMA(bma_out, top = 10)
+#' }
+"AMD_data"

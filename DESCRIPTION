@@ -1,0 +1,42 @@
+Package: MRBMA
+Type: Package
+Title: Bayesian Model Averaging for Multivariable Mendelian Randomization
+Version: 0.1.0
+Date: 2026-05-23
+Authors@R: c(
+    person("Leonardo", "Bottolo", email = "lb664@cam.ac.uk",       role = c("aut", "cre")),
+    person("Verena",   "Zuber",   email = "v.zuber@imperial.ac.uk", role = "aut"))
+Maintainer: Leonardo Bottolo <lb664@cam.ac.uk>
+Description: Implements the MR-BMA method of Zuber et al. (2020)
+    <doi:10.1038/s41467-019-13870-3> for prioritising causal exposures from
+    genome-wide summary statistics using Bayesian model averaging (BMA). Two
+    complementary search strategies are provided: exhaustive enumeration of all
+    2^d - 1 possible models via MRBMA_exhaustive(), which is feasible for up to
+    approximately 12 exposures, and a shotgun stochastic search (SSS) via
+    MRBMA_SSS() for larger model spaces, based on the algorithm of Hans et al.
+    (2007) <doi:10.1198/016214507000000121>. Both strategies return
+    model-averaged causal estimates and Marginal Posterior Probabilities of
+    Inclusion (MPPIs) for each exposure. Empirical p-values and
+    Benjamini-Hochberg false discovery rates are obtained through the permutation
+    procedure of Levin et al. (2021) <doi:10.1161/CIRCULATIONAHA.121.053797>.
+    Diagnostic functions detect influential and outlying genetic instruments using
+    Cook's distance (Cook (1977) <doi:10.1080/00401706.1977.10489493>) and a
+    Q-statistic. All inner-loop matrix computations are implemented in C++ via
+    RcppArmadillo; the stochastic search hash table uses std::unordered_map.
+License: GPL-2 | file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RdMacros: Rdpack
+Imports:
+    methods,
+    Rcpp,
+    Rdpack,
+    stats,
+    utils
+LinkingTo:
+    Rcpp,
+    RcppArmadillo
+Depends:
+    R (>= 3.5.0)
+LazyData: true
+Config/roxygen2/version: 8.0.0
